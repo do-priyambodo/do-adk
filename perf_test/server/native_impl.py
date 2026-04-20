@@ -1,15 +1,25 @@
 import time
 from google.genai import Client
+from google.genai import types
+
+# Shared client instance to reuse connection pool
+client = Client()
+
+# Shared config to ensure identical model parameters
+shared_config = types.GenerateContentConfig(
+    system_instruction="You are a helpful assistant.",
+    temperature=1.0
+)
 
 def generate_native(prompt: str):
     """Calls Gemini using the raw Google Gen AI SDK."""
-    client = Client()  # Automatically picks up GOOGLE_API_KEY from environment
     
     start_time = time.time()
     
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt,
+        config=shared_config
     )
     
     latency_ms = int((time.time() - start_time) * 1000)
@@ -24,10 +34,7 @@ native_sessions = {}
 
 def chat_native(session_id: str, prompt: str):
     """Calls Gemini using Native SDK and manually manages history."""
-    from google.genai import Client
     from google.genai import types
-    
-    client = Client()
     
     if session_id not in native_sessions:
         native_sessions[session_id] = []
@@ -48,6 +55,7 @@ def chat_native(session_id: str, prompt: str):
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=contents,
+        config=shared_config
     )
     
     latency_ms = int((time.time() - start_time) * 1000)
@@ -63,10 +71,7 @@ def chat_native(session_id: str, prompt: str):
 
 def tool_native(prompt: str):
     """Calls Gemini using Native SDK and manually handles tool calls."""
-    from google.genai import Client
     from google.genai import types
-    
-    client = Client()
     
     def get_mock_weather(location: str):
         return f"The weather in {location} is sunny and 25°C."
@@ -76,7 +81,11 @@ def tool_native(prompt: str):
     
     try:
         # Step 1: Call model with tool in config
-        config = types.GenerateContentConfig(tools=[get_mock_weather])
+        config = types.GenerateContentConfig(
+            tools=[get_mock_weather],
+            system_instruction="You are a helpful assistant.",
+            temperature=1.0
+        )
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
@@ -127,10 +136,7 @@ def tool_native(prompt: str):
 
 def agent_native(prompt: str):
     """Simulates a multi-agent flow by chaining two model calls."""
-    from google.genai import Client
     from google.genai import types
-    
-    client = Client()
     
     start_time = time.time()
     
@@ -139,6 +145,7 @@ def agent_native(prompt: str):
     response1 = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=research_prompt,
+        config=shared_config
     )
     research_result = response1.text
     
@@ -147,6 +154,7 @@ def agent_native(prompt: str):
     response2 = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=writer_prompt,
+        config=shared_config
     )
     final_text = response2.text
     
@@ -159,13 +167,11 @@ def agent_native(prompt: str):
 
 async def stream_native(prompt: str):
     """Streams Gemini response using Native SDK."""
-    from google.genai import Client
     import asyncio
-    
-    client = Client()
     response = client.models.generate_content_stream(
         model="gemini-2.5-flash",
         contents=prompt,
+        config=shared_config
     )
     for chunk in response:
         if chunk.text:

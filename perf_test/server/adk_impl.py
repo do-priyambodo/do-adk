@@ -7,7 +7,8 @@ from google.genai import types
 agent = Agent(
     name="comparison_agent",
     model="gemini-2.5-flash",
-    instruction="You are a helpful assistant. Answer the user's questions concisely.",
+    instruction="You are a helpful assistant.",
+    generate_content_config=types.GenerateContentConfig(temperature=1.0)
 )
 
 import asyncio
@@ -28,22 +29,22 @@ async def setup_session():
 
 # Session setup will be called by FastAPI startup event
 
-async def _ensure_session(session_id: str):
-    session = await runner.session_service.get_session(
-        app_name="ComparisonApp",
+async def _ensure_session(session_service, app_name: str, session_id: str):
+    session = await session_service.get_session(
+        app_name=app_name,
         user_id="user_123",
         session_id=session_id
     )
     if not session:
-        await runner.session_service.create_session(
-            app_name="ComparisonApp",
+        await session_service.create_session(
+            app_name=app_name,
             user_id="user_123",
             session_id=session_id
         )
 
 async def generate_adk(prompt: str, session_id: str = "session_123"):
     """Calls Gemini using the ADK Framework."""
-    await _ensure_session(session_id)
+    await _ensure_session(runner.session_service, "ComparisonApp", session_id)
     
     start_time = time.time()
     response_text = ""
@@ -93,11 +94,7 @@ tool_runner = InMemoryRunner(
 async def tool_adk(prompt: str):
     """Calls Gemini using the ADK Framework and handles tool calls."""
     # Ensure session exists for tool test
-    await tool_runner.session_service.create_session(
-        app_name="ToolApp",
-        user_id="user_123",
-        session_id="session_tool"
-    )
+    await _ensure_session(tool_runner.session_service, "ToolApp", "session_tool")
     
     start_time = time.time()
     response_text = ""
@@ -150,11 +147,7 @@ agent_runner = InMemoryRunner(
 async def agent_adk(prompt: str):
     """Calls Gemini using the ADK Framework for multi-agent coordination."""
     # Ensure session exists for agent test
-    await agent_runner.session_service.create_session(
-        app_name="AgentApp",
-        user_id="user_123",
-        session_id="session_agent"
-    )
+    await _ensure_session(agent_runner.session_service, "AgentApp", "session_agent")
     
     start_time = time.time()
     response_text = ""
@@ -180,7 +173,7 @@ async def agent_adk(prompt: str):
 
 async def stream_adk(prompt: str):
     """Streams Gemini response using the ADK Framework."""
-    await _ensure_session("session_stream")
+    await _ensure_session(runner.session_service, "ComparisonApp", "session_stream")
     
     # runner.run returns a sync generator.
     # We yield from it to make this an async generator.
@@ -232,11 +225,7 @@ parallel_runner = InMemoryRunner(
 async def parallel_adk(prompt: str):
     """Calls Gemini using the ADK Framework for parallel execution."""
     # Ensure session exists for parallel test
-    await parallel_runner.session_service.create_session(
-        app_name="ParallelApp",
-        user_id="user_123",
-        session_id="session_parallel"
-    )
+    await _ensure_session(parallel_runner.session_service, "ParallelApp", "session_parallel")
     
     start_time = time.time()
     response_text = ""
@@ -284,11 +273,7 @@ loop_runner = InMemoryRunner(
 async def loop_adk(prompt: str):
     """Calls Gemini using the ADK Framework for loop execution."""
     # Ensure session exists for loop test
-    await loop_runner.session_service.create_session(
-        app_name="LoopApp",
-        user_id="user_123",
-        session_id="session_loop"
-    )
+    await _ensure_session(loop_runner.session_service, "LoopApp", "session_loop")
     
     start_time = time.time()
     response_text = ""
@@ -327,11 +312,8 @@ structured_runner = InMemoryRunner(
 
 async def structured_adk(prompt: str):
     """Calls Gemini using the ADK Framework and maintains session."""
-    await structured_runner.session_service.create_session(
-        app_name="StructuredApp",
-        user_id="user_123",
-        session_id="session_structured"
-    )
+    # Ensure session exists for structured test
+    await _ensure_session(structured_runner.session_service, "StructuredApp", "session_structured")
     
     start_time = time.time()
     response_text = ""

@@ -13,6 +13,13 @@ env.local
 
 # Shell scripts
 *.sh
+!perf_test/server/startlocalserver.sh
+!perf_test/client/startlocalclient.sh
+!perf_test/client/startlocalclient10x.sh
+
+# Logs
+latest.log
+perf_test/server/latest.log
 
 # Cloned dependencies
 adk-python/
