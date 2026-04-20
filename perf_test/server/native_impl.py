@@ -124,3 +124,139 @@ def tool_native(prompt: str):
         "response": final_text,
         "latency_ms": latency_ms
     }
+
+def agent_native(prompt: str):
+    """Simulates a multi-agent flow by chaining two model calls."""
+    from google.genai import Client
+    from google.genai import types
+    
+    client = Client()
+    
+    start_time = time.time()
+    
+    # Step 1: "Research" phase
+    research_prompt = f"You are a researcher. Provide 3 short key facts about: {prompt}"
+    response1 = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=research_prompt,
+    )
+    research_result = response1.text
+    
+    # Step 2: "Writer" phase
+    writer_prompt = f"You are a professional writer. Turn this research into a polite paragraph:\n{research_result}"
+    response2 = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=writer_prompt,
+    )
+    final_text = response2.text
+    
+    latency_ms = int((time.time() - start_time) * 1000)
+    
+    return {
+        "response": final_text,
+        "latency_ms": latency_ms
+    }
+
+async def stream_native(prompt: str):
+    """Streams Gemini response using Native SDK."""
+    from google.genai import Client
+    import asyncio
+    
+    client = Client()
+    response = client.models.generate_content_stream(
+        model="gemini-2.5-flash",
+        contents=prompt,
+    )
+    for chunk in response:
+        if chunk.text:
+            yield chunk.text
+            await asyncio.sleep(0)  # Yield control to event loop
+
+def parallel_native(prompt: str):
+    """Calls Gemini 3 times in parallel using ThreadPoolExecutor in Native SDK."""
+    from google.genai import Client
+    import concurrent.futures
+    
+    start_time = time.time()
+    final_text = ""
+    
+    try:
+        client = Client()
+        
+        prompts = [
+            f"Provide a positive view on: {prompt}",
+            f"Provide a negative view on: {prompt}",
+            f"Provide a neutral view on: {prompt}"
+        ]
+        
+        def call_model(p):
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=p,
+            )
+            return response.text
+            
+        # Run in parallel using a thread pool
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+            results = list(executor.map(call_model, prompts))
+            
+        final_text = "\n\n".join([f"--- Response {i+1} ---\n{text}" for i, text in enumerate(results)])
+        
+    except Exception as e:
+        final_text = f"Error in Native Parallel flow: {str(e)}"
+        
+    latency_ms = int((time.time() - start_time) * 1000)
+    
+    return {
+        "response": final_text,
+        "latency_ms": latency_ms
+    }
+
+def loop_native(prompt: str):
+    """Simulates a loop workflow by calling Gemini 3 times in a loop."""
+    from google.genai import Client
+    
+    client = Client()
+    
+    start_time = time.time()
+    current_prompt = prompt
+    final_text = ""
+    
+    # Run the task 3 times in a loop
+    for i in range(3):
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=current_prompt,
+        )
+        final_text += f"--- Iteration {i+1} ---\n{response.text}\n\n"
+        # Pass the response to the next iteration to simulate context passing
+        current_prompt = f"Continue based on this previous response:\n{response.text}"
+        
+    latency_ms = int((time.time() - start_time) * 1000)
+    
+    return {
+        "response": final_text,
+        "latency_ms": latency_ms
+    }
+
+def structured_native(prompt: str):
+    """Calls Gemini and asks for strictly formatted JSON output."""
+    from google.genai import Client
+    
+    client = Client()
+    
+    start_time = time.time()
+    
+    json_prompt = f"{prompt}. Respond ONLY with a valid JSON array of objects. Each object must have 'name', 'lifespan', and 'habitat' keys."
+    
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=json_prompt,
+    )
+    
+    latency_ms = int((time.time() - start_time) * 1000)
+    
+    return {
+        "response": response.text,
+        "latency_ms": latency_ms
+    }

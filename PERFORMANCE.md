@@ -96,6 +96,11 @@ To demonstrate the superiority of ADK for production applications, we propose th
     *   **Insight**: The performance might be slightly slower than the raw SDK due to the abstraction layer, but it establishes the foundation for all advanced features with very simple code.
     *   *Winner*: **Native SDK** for raw speed on single calls, but **ADK** for setting up the agent infrastructure.
 
+*   **Scenario 2: Structured Output (JSON Schema)**
+    *   **Goal**: Force the model to return data adhering to a specific JSON schema.
+    *   **Insight**: Even for a simple agent, ADK simplifies the setup and delivered faster performance in our test (3.0s vs 4.7s).
+    *   *Winner*: **ADK** (For performance and ease of use).
+
 ### Category B: Performance Same or Slightly Slower, but Feature is MUCH Better
 *   **Scenario 2: Multi-Turn Chat (Auto-Memory)**
     *   **Goal**: Compare ADK's automatic memory against manual state handling in the Native SDK.
@@ -107,6 +112,8 @@ To demonstrate the superiority of ADK for production applications, we propose th
     *   **Insight**: The performance is dominated by the LLM call itself, making the execution speed similar, but ADK eliminates significant boilerplate code by handling the loop automatically.
     *   *Winner*: **ADK** (For developer experience).
 
+
+
 ### Category C: Performance of ADK is BETTER compared to Native SDK
 *   **Scenario 4: Complex Multi-Agent Coordination**
     *   **Goal**: Compare a task that requires specialized sub-agents (e.g., a researcher and a writer).
@@ -117,3 +124,15 @@ To demonstrate the superiority of ADK for production applications, we propose th
 *   **Scenario 5: Stream**
     *   **Goal**: Measure "Time to First Token" (TTFT) to compare perceived latency.
     *   **Insight**: ADK's event system supports streaming out of the box, which is crucial for user experience in chat apps.
+
+### Category D: Advanced Workflow Patterns
+*   **Scenario 6: Parallel Workflow**
+    *   **Goal**: Run multiple tasks concurrently and combine results.
+    *   **Insight**: Native SDK requires manual concurrency handling (e.g., `asyncio.gather`). ADK provides **`ParallelAgent`** to handle this natively.
+    *   *Winner*: **ADK** (For ease of use and reliability).
+
+*   **Scenario 7: Loop Workflow**
+    *   **Goal**: Repeat a task until a specific condition is met.
+    *   **Native**: Requires manual loop control and state evaluation in code.
+    *   **ADK**: Provides **`LoopAgent`** specifically for this pattern.
+    *   *Winner*: **ADK** (For maintainability).
