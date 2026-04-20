@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# Local environment files (contain secrets)
+env.local
+.env.local
+
+# Shell scripts
+*.sh
+
+# Cloned dependencies
+adk-python/
