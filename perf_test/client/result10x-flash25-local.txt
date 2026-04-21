@@ -1,0 +1,399 @@
+Environment variables loaded for Vertex AI
+Warming up connections... [OK]
+
+=== RUN 1 OF 10 ===
+Testing NATIVE - base... [OK] (9367ms)
+Testing ADK - base... [OK] (7132ms)
+Testing NATIVE - structured... [OK] (7815ms)
+Testing ADK - structured... [OK] (2791ms)
+Testing NATIVE - chat... [OK] (12275ms)
+Testing ADK - chat... [OK] (11251ms)
+Testing NATIVE - tool... [OK] (3715ms)
+Testing ADK - tool... [OK] (4603ms)
+Testing NATIVE - agent... [OK] (11027ms)
+Testing ADK - agent... [OK] (5344ms)
+Testing NATIVE - parallel... [OK] (12451ms)
+Testing ADK - parallel... [OK] (12011ms)
+Testing NATIVE - loop... [OK] (37295ms)
+Testing ADK - loop... [OK] (17081ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 3719ms
+  [Stream Done] Total Time: 6276ms
+Testing ADK - stream...
+  [First Token] TTFT: 7394ms
+  [Stream Done] Total Time: 7398ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 9367         | 7132         | 2235       | +23%       | ADK       
+structured      | 7815         | 2791         | 5024       | +64%       | ADK       
+chat            | 12275        | 11251        | 1024       | +8%        | ADK       
+tool            | 3715         | 4603         | 888        | -23%       | Native    
+agent           | 11027        | 5344         | 5683       | +51%       | ADK       
+parallel        | 12451        | 12011        | 440        | +3%        | ADK       
+loop            | 37295        | 17081        | 20214      | +54%       | ADK       
+stream          | 6276         | 7398         | 1122       | -17%       | Native    
+  (TTFT)        | 3719         | 7394         | 3675       | -98%       | Native    
+
+=== RUN 2 OF 10 ===
+Testing NATIVE - base... [OK] (7346ms)
+Testing ADK - base... [OK] (9815ms)
+Testing NATIVE - structured... [OK] (6759ms)
+Testing ADK - structured... [OK] (3487ms)
+Testing NATIVE - chat... [OK] (9947ms)
+Testing ADK - chat... [OK] (13747ms)
+Testing NATIVE - tool... [OK] (1727ms)
+Testing ADK - tool... [OK] (4703ms)
+Testing NATIVE - agent... [OK] (12111ms)
+Testing ADK - agent... [OK] (3991ms)
+Testing NATIVE - parallel... [OK] (13783ms)
+Testing ADK - parallel... [OK] (13655ms)
+Testing NATIVE - loop... [OK] (43807ms)
+Testing ADK - loop... [OK] (19835ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 1698ms
+  [Stream Done] Total Time: 5260ms
+Testing ADK - stream...
+  [First Token] TTFT: 11802ms
+  [Stream Done] Total Time: 11807ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 7346         | 9815         | 2469       | -33%       | Native    
+structured      | 6759         | 3487         | 3272       | +48%       | ADK       
+chat            | 9947         | 13747        | 3800       | -38%       | Native    
+tool            | 1727         | 4703         | 2976       | -172%      | Native    
+agent           | 12111        | 3991         | 8120       | +67%       | ADK       
+parallel        | 13783        | 13655        | 128        | +0%        | ADK       
+loop            | 43807        | 19835        | 23972      | +54%       | ADK       
+stream          | 5260         | 11807        | 6547       | -124%      | Native    
+  (TTFT)        | 1698         | 11802        | 10104      | -595%      | Native    
+
+=== RUN 3 OF 10 ===
+Testing NATIVE - base... [OK] (7079ms)
+Testing ADK - base... [OK] (13327ms)
+Testing NATIVE - structured... [OK] (17232ms)
+Testing ADK - structured... [OK] (3443ms)
+Testing NATIVE - chat... [OK] (9104ms)
+Testing ADK - chat... [OK] (15519ms)
+Testing NATIVE - tool... [OK] (3887ms)
+Testing ADK - tool... [OK] (7199ms)
+Testing NATIVE - agent... [OK] (11475ms)
+Testing ADK - agent... [OK] (3425ms)
+Testing NATIVE - parallel... [OK] (15586ms)
+Testing ADK - parallel... [OK] (16555ms)
+Testing NATIVE - loop... [OK] (47115ms)
+Testing ADK - loop... [OK] (27495ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 3021ms
+  [Stream Done] Total Time: 7677ms
+Testing ADK - stream...
+  [First Token] TTFT: 13993ms
+  [Stream Done] Total Time: 13998ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 7079         | 13327        | 6248       | -88%       | Native    
+structured      | 17232        | 3443         | 13789      | +80%       | ADK       
+chat            | 9104         | 15519        | 6415       | -70%       | Native    
+tool            | 3887         | 7199         | 3312       | -85%       | Native    
+agent           | 11475        | 3425         | 8050       | +70%       | ADK       
+parallel        | 15586        | 16555        | 969        | -6%        | Native    
+loop            | 47115        | 27495        | 19620      | +41%       | ADK       
+stream          | 7677         | 13998        | 6321       | -82%       | Native    
+  (TTFT)        | 3021         | 13993        | 10972      | -363%      | Native    
+
+=== RUN 4 OF 10 ===
+Testing NATIVE - base... [OK] (7320ms)
+Testing ADK - base... [OK] (13443ms)
+Testing NATIVE - structured... [OK] (12483ms)
+Testing ADK - structured... [OK] (3003ms)
+Testing NATIVE - chat... [OK] (11303ms)
+Testing ADK - chat... [OK] (13255ms)
+Testing NATIVE - tool... [OK] (2947ms)
+Testing ADK - tool... [OK] (6788ms)
+Testing NATIVE - agent... [OK] (7663ms)
+Testing ADK - agent... [OK] (4759ms)
+Testing NATIVE - parallel... [OK] (15156ms)
+Testing ADK - parallel... [OK] (12163ms)
+Testing NATIVE - loop... [OK] (44855ms)
+Testing ADK - loop... [OK] (33795ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 3306ms
+  [Stream Done] Total Time: 5252ms
+Testing ADK - stream...
+  [First Token] TTFT: 15014ms
+  [Stream Done] Total Time: 15018ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 7320         | 13443        | 6123       | -83%       | Native    
+structured      | 12483        | 3003         | 9480       | +75%       | ADK       
+chat            | 11303        | 13255        | 1952       | -17%       | Native    
+tool            | 2947         | 6788         | 3841       | -130%      | Native    
+agent           | 7663         | 4759         | 2904       | +37%       | ADK       
+parallel        | 15156        | 12163        | 2993       | +19%       | ADK       
+loop            | 44855        | 33795        | 11060      | +24%       | ADK       
+stream          | 5252         | 15018        | 9766       | -185%      | Native    
+  (TTFT)        | 3306         | 15014        | 11708      | -354%      | Native    
+
+=== RUN 5 OF 10 ===
+Testing NATIVE - base... [OK] (9012ms)
+Testing ADK - base... [OK] (18931ms)
+Testing NATIVE - structured... [OK] (5427ms)
+Testing ADK - structured... [OK] (3211ms)
+Testing NATIVE - chat... [OK] (14219ms)
+Testing ADK - chat... [OK] (11611ms)
+Testing NATIVE - tool... [OK] (3563ms)
+Testing ADK - tool... [OK] (7507ms)
+Testing NATIVE - agent... [OK] (12816ms)
+Testing ADK - agent... [OK] (5000ms)
+Testing NATIVE - parallel... [OK] (13943ms)
+Testing ADK - parallel... [OK] (14303ms)
+Testing NATIVE - loop... [OK] (38111ms)
+Testing ADK - loop... [OK] (40239ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 2214ms
+  [Stream Done] Total Time: 5404ms
+Testing ADK - stream...
+  [First Token] TTFT: 14736ms
+  [Stream Done] Total Time: 14741ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 9012         | 18931        | 9919       | -110%      | Native    
+structured      | 5427         | 3211         | 2216       | +40%       | ADK       
+chat            | 14219        | 11611        | 2608       | +18%       | ADK       
+tool            | 3563         | 7507         | 3944       | -110%      | Native    
+agent           | 12816        | 5000         | 7816       | +60%       | ADK       
+parallel        | 13943        | 14303        | 360        | -2%        | Native    
+loop            | 38111        | 40239        | 2128       | -5%        | Native    
+stream          | 5404         | 14741        | 9337       | -172%      | Native    
+  (TTFT)        | 2214         | 14736        | 12522      | -565%      | Native    
+
+=== RUN 6 OF 10 ===
+Testing NATIVE - base... [OK] (8905ms)
+Testing ADK - base... [OK] (15363ms)
+Testing NATIVE - structured... [OK] (11939ms)
+Testing ADK - structured... [OK] (3527ms)
+Testing NATIVE - chat... [OK] (14063ms)
+Testing ADK - chat... [OK] (12487ms)
+Testing NATIVE - tool... [OK] (2996ms)
+Testing ADK - tool... [OK] (7539ms)
+Testing NATIVE - agent... [OK] (13219ms)
+Testing ADK - agent... [OK] (4919ms)
+Testing NATIVE - parallel... [OK] (15559ms)
+Testing ADK - parallel... [OK] (12331ms)
+Testing NATIVE - loop... [OK] (44895ms)
+Testing ADK - loop... [OK] (34311ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 6158ms
+  [Stream Done] Total Time: 9132ms
+Testing ADK - stream...
+  [First Token] TTFT: 12934ms
+  [Stream Done] Total Time: 12939ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 8905         | 15363        | 6458       | -72%       | Native    
+structured      | 11939        | 3527         | 8412       | +70%       | ADK       
+chat            | 14063        | 12487        | 1576       | +11%       | ADK       
+tool            | 2996         | 7539         | 4543       | -151%      | Native    
+agent           | 13219        | 4919         | 8300       | +62%       | ADK       
+parallel        | 15559        | 12331        | 3228       | +20%       | ADK       
+loop            | 44895        | 34311        | 10584      | +23%       | ADK       
+stream          | 9132         | 12939        | 3807       | -41%       | Native    
+  (TTFT)        | 6158         | 12934        | 6776       | -110%      | Native    
+
+=== RUN 7 OF 10 ===
+Testing NATIVE - base... [OK] (14075ms)
+Testing ADK - base... [OK] (13207ms)
+Testing NATIVE - structured... [OK] (5927ms)
+Testing ADK - structured... [OK] (3063ms)
+Testing NATIVE - chat... [OK] (11884ms)
+Testing ADK - chat... [OK] (11903ms)
+Testing NATIVE - tool... [OK] (2028ms)
+Testing ADK - tool... [OK] (7839ms)
+Testing NATIVE - agent... [OK] (5647ms)
+Testing ADK - agent... [OK] (5855ms)
+Testing NATIVE - parallel... [OK] (14867ms)
+Testing ADK - parallel... [OK] (10555ms)
+Testing NATIVE - loop... [OK] (35559ms)
+Testing ADK - loop... [OK] (30967ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 4456ms
+  [Stream Done] Total Time: 6778ms
+Testing ADK - stream...
+  [First Token] TTFT: 11491ms
+  [Stream Done] Total Time: 11496ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 14075        | 13207        | 868        | +6%        | ADK       
+structured      | 5927         | 3063         | 2864       | +48%       | ADK       
+chat            | 11884        | 11903        | 19         | +0%        | Native    
+tool            | 2028         | 7839         | 5811       | -286%      | Native    
+agent           | 5647         | 5855         | 208        | -3%        | Native    
+parallel        | 14867        | 10555        | 4312       | +29%       | ADK       
+loop            | 35559        | 30967        | 4592       | +12%       | ADK       
+stream          | 6778         | 11496        | 4718       | -69%       | Native    
+  (TTFT)        | 4456         | 11491        | 7035       | -157%      | Native    
+
+=== RUN 8 OF 10 ===
+Testing NATIVE - base... [OK] (10732ms)
+Testing ADK - base... [OK] (11911ms)
+Testing NATIVE - structured... [OK] (5619ms)
+Testing ADK - structured... [OK] (3103ms)
+Testing NATIVE - chat... [OK] (17467ms)
+Testing ADK - chat... [OK] (17815ms)
+Testing NATIVE - tool... [OK] (4312ms)
+Testing ADK - tool... [OK] (7775ms)
+Testing NATIVE - agent... [OK] (9207ms)
+Testing ADK - agent... [OK] (7395ms)
+Testing NATIVE - parallel... [OK] (10219ms)
+Testing ADK - parallel... [OK] (15335ms)
+Testing NATIVE - loop... [OK] (35247ms)
+Testing ADK - loop... [OK] (51740ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 6361ms
+  [Stream Done] Total Time: 9117ms
+Testing ADK - stream...
+  [First Token] TTFT: 13417ms
+  [Stream Done] Total Time: 13423ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 10732        | 11911        | 1179       | -10%       | Native    
+structured      | 5619         | 3103         | 2516       | +44%       | ADK       
+chat            | 17467        | 17815        | 348        | -1%        | Native    
+tool            | 4312         | 7775         | 3463       | -80%       | Native    
+agent           | 9207         | 7395         | 1812       | +19%       | ADK       
+parallel        | 10219        | 15335        | 5116       | -50%       | Native    
+loop            | 35247        | 51740        | 16493      | -46%       | Native    
+stream          | 9117         | 13423        | 4306       | -47%       | Native    
+  (TTFT)        | 6361         | 13417        | 7056       | -110%      | Native    
+
+=== RUN 9 OF 10 ===
+Testing NATIVE - base... [OK] (8802ms)
+Testing ADK - base... [OK] (16891ms)
+Testing NATIVE - structured... [OK] (7719ms)
+Testing ADK - structured... [OK] (3227ms)
+Testing NATIVE - chat... [OK] (16723ms)
+Testing ADK - chat... [OK] (13039ms)
+Testing NATIVE - tool... [OK] (2351ms)
+Testing ADK - tool... [OK] (8640ms)
+Testing NATIVE - agent... [OK] (5363ms)
+Testing ADK - agent... [OK] (7579ms)
+Testing NATIVE - parallel... [OK] (12500ms)
+Testing ADK - parallel... [OK] (15591ms)
+Testing NATIVE - loop... [OK] (35791ms)
+Testing ADK - loop... [OK] (54995ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 3824ms
+  [Stream Done] Total Time: 6621ms
+Testing ADK - stream...
+  [First Token] TTFT: 15477ms
+  [Stream Done] Total Time: 15483ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 8802         | 16891        | 8089       | -91%       | Native    
+structured      | 7719         | 3227         | 4492       | +58%       | ADK       
+chat            | 16723        | 13039        | 3684       | +22%       | ADK       
+tool            | 2351         | 8640         | 6289       | -267%      | Native    
+agent           | 5363         | 7579         | 2216       | -41%       | Native    
+parallel        | 12500        | 15591        | 3091       | -24%       | Native    
+loop            | 35791        | 54995        | 19204      | -53%       | Native    
+stream          | 6621         | 15483        | 8862       | -133%      | Native    
+  (TTFT)        | 3824         | 15477        | 11653      | -304%      | Native    
+
+=== RUN 10 OF 10 ===
+Testing NATIVE - base... [OK] (6839ms)
+Testing ADK - base... [OK] (12775ms)
+Testing NATIVE - structured... [OK] (10083ms)
+Testing ADK - structured... [OK] (2919ms)
+Testing NATIVE - chat... [OK] (12847ms)
+Testing ADK - chat... [OK] (11623ms)
+Testing NATIVE - tool... [OK] (3324ms)
+Testing ADK - tool... [OK] (7823ms)
+Testing NATIVE - agent... [OK] (12919ms)
+Testing ADK - agent... [OK] (8783ms)
+Testing NATIVE - parallel... [OK] (12667ms)
+Testing ADK - parallel... [OK] (18031ms)
+Testing NATIVE - loop... [OK] (35515ms)
+Testing ADK - loop... [OK] (55936ms)
+Testing NATIVE - stream...
+  [First Token] TTFT: 4200ms
+  [Stream Done] Total Time: 8666ms
+Testing ADK - stream...
+  [First Token] TTFT: 14446ms
+  [Stream Done] Total Time: 14452ms
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 6839         | 12775        | 5936       | -86%       | Native    
+structured      | 10083        | 2919         | 7164       | +71%       | ADK       
+chat            | 12847        | 11623        | 1224       | +9%        | ADK       
+tool            | 3324         | 7823         | 4499       | -135%      | Native    
+agent           | 12919        | 8783         | 4136       | +32%       | ADK       
+parallel        | 12667        | 18031        | 5364       | -42%       | Native    
+loop            | 35515        | 55936        | 20421      | -57%       | Native    
+stream          | 8666         | 14452        | 5786       | -66%       | Native    
+  (TTFT)        | 4200         | 14446        | 10246      | -243%      | Native    
+
+=== FINAL AVERAGES (10 Runs) ===
+
+=== BENCHMARK SUMMARY ===
+Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Diff (%)   | Winner    
+-------------------------------------------------------------------------------------
+base            | 8947         | 13279        | 4332       | -48%       | Native    
+structured      | 9100         | 3177         | 5923       | +65%       | ADK       
+chat            | 12983        | 13225        | 242        | -1%        | Native    
+tool            | 3085         | 7041         | 3956       | -128%      | Native    
+agent           | 10144        | 5705         | 4439       | +43%       | ADK       
+parallel        | 13673        | 14053        | 380        | -2%        | Native    
+loop            | 39819        | 36639        | 3180       | +7%        | ADK       
+stream          | 7018         | 13075        | 6057       | -86%       | Native    
+  (TTFT)        | 3895         | 13070        | 9175       | -235%      | Native    
+
+=== COMPREHENSIVE ANALYSIS OF AVERAGES (Generated by Gemini) ===
+Here's an analysis of the benchmark results:
+
+**Key Performance Observations:**
+
+1.  **Native SDK Dominance in Raw Performance & Streaming:**
+    *   **`base` (8947 vs 13279): Native wins.** ADK introduces significant base overhead for simple API calls.
+    *   **`tool` (3085 vs 7041): Native wins significantly.** ADK's tool calling mechanism adds substantial latency, likely due to additional processing, parsing, or orchestration layers.
+    *   **`stream` (TTFT: 3895 vs 13070; Total: 7018 vs 13075): Native wins significantly.** Native SDK delivers tokens and completes streams much faster. ADK's streaming performance, particularly TTFT, is heavily penalized, suggesting substantial overhead before the first byte is received.
+
+2.  **ADK Framework Excellence in Orchestration & Structured Output:**
+    *   **`structured` (9100 vs 3177): ADK wins significantly.** This is a strong positive for ADK. It suggests ADK has optimized mechanisms for schema enforcement, validation, and parsing of structured outputs, outperforming Native SDK when this complexity is involved.
+    *   **`agent` (10144 vs 5705): ADK wins significantly.** ADK excels in agentic workflows, confirming its value proposition for higher-level abstraction, state management, and multi-turn interaction orchestration.
+    *   **`loop` (39819 vs 36639): ADK wins.** ADK is marginally faster in looped operations, potentially due to better resource management, connection pooling, or optimized repetitive call patterns within its framework.
+
+3.  **Near-Parity in Common Scenarios:**
+    *   **`chat` (12983 vs 13225): Native slightly wins.** The difference is minimal, suggesting similar underlying pathways or negligible ADK overhead for basic chat interactions.
+    *   **`parallel` (13673 vs 14053): Native slightly wins.** Again, the difference is minor, indicating comparable efficiency in parallel execution, or similar overheads when managing concurrent requests.
+
+**Consistency and Variance Implications:**
+
+*   **"Averaged results run 10 times":** This means these numbers are means, smoothing out individual run fluctuations.
+*   **Lack of Variance Data:** Without standard deviation, min/max, or confidence intervals, we cannot assess the consistency of these wins/losses. A small average difference (e.g., `chat`, `parallel`) might be statistically insignificant if variance is high. Conversely, a large average difference (e.g., `tool`, `structured`) is *likely* significant, but consistency cannot be guaranteed without more data.
+*   **Actionable:** For critical high-performance use cases, especially where differences are slight, further statistical analysis including variance metrics is essential to confirm the robustness of these observed performance characteristics.
+
+**Actionable Insights:**
+
+*   **Use Native SDK for:** Pure throughput-sensitive applications, direct LLM calls without complex orchestration, simple tool invocation, and streaming responses where Time-To-First-Token (TTFT) and total stream duration are critical.
+*   **Use ADK Framework for:** Applications requiring robust structured output handling, complex multi-step agentic workflows, or scenarios benefiting from higher-level abstractions and optimized repetitive logic.
+*   **Investigate ADK Overhead:** Deep dive into ADK's implementation for `base`, `tool`, and `stream` to identify and mitigate the significant latency introduced in these scenarios if those are performance bottlenecks for your use case.
+*   **Validate Critical Paths:** For scenarios with small performance differences, re-run benchmarks with variance measurement to confirm consistency and statistical significance.
