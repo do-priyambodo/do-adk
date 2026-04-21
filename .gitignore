@@ -20,6 +20,8 @@ env.local
 # Logs
 latest.log
 perf_test/server/latest.log
+perf_test/client/result10x.txt
 
 # Cloned dependencies
 adk-python/
+perf_test/archived/

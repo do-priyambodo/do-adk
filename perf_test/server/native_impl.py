@@ -11,13 +11,12 @@ shared_config = types.GenerateContentConfig(
     temperature=1.0
 )
 
-def generate_native(prompt: str):
-    """Calls Gemini using the raw Google Gen AI SDK."""
-    
+async def generate_native(prompt: str, model_name: str = "gemini-2.5-flash"):
+    """Calls Gemini using the raw Google Gen AI SDK (Async)."""
     start_time = time.time()
     
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
+    response = await client.aio.models.generate_content(
+        model=model_name,
         contents=prompt,
         config=shared_config
     )
@@ -32,8 +31,8 @@ def generate_native(prompt: str):
 # In-memory store for native sessions
 native_sessions = {}
 
-def chat_native(session_id: str, prompt: str):
-    """Calls Gemini using Native SDK and manually manages history."""
+async def chat_native(session_id: str, prompt: str, model_name: str = "gemini-2.5-flash"):
+    """Calls Gemini using Native SDK and manually manages history (Async)."""
     from google.genai import types
     
     if session_id not in native_sessions:
@@ -52,8 +51,8 @@ def chat_native(session_id: str, prompt: str):
     # Add current prompt
     contents.append(types.Content(role="user", parts=[types.Part.from_text(text=prompt)]))
     
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
+    response = await client.aio.models.generate_content(
+        model=model_name,
         contents=contents,
         config=shared_config
     )
@@ -69,8 +68,8 @@ def chat_native(session_id: str, prompt: str):
         "latency_ms": latency_ms
     }
 
-def tool_native(prompt: str):
-    """Calls Gemini using Native SDK and manually handles tool calls."""
+async def tool_native(prompt: str, model_name: str = "gemini-2.5-flash"):
+    """Calls Gemini using Native SDK and manually handles tool calls (Async)."""
     from google.genai import types
     
     def get_mock_weather(location: str):
@@ -86,8 +85,8 @@ def tool_native(prompt: str):
             system_instruction="You are a helpful assistant.",
             temperature=1.0
         )
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
+        response = await client.aio.models.generate_content(
+            model=model_name,
             contents=prompt,
             config=config
         )
@@ -117,9 +116,10 @@ def tool_native(prompt: str):
                             ])
                         ]
                         
-                        response2 = client.models.generate_content(
-                            model="gemini-2.5-flash",
-                            contents=contents
+                        response2 = await client.aio.models.generate_content(
+                            model=model_name,
+                            contents=contents,
+                            config=shared_config
                         )
                         final_text = response2.text
                         break
@@ -134,16 +134,16 @@ def tool_native(prompt: str):
         "latency_ms": latency_ms
     }
 
-def agent_native(prompt: str):
-    """Simulates a multi-agent flow by chaining two model calls."""
+async def agent_native(prompt: str, model_name: str = "gemini-2.5-flash"):
+    """Simulates a multi-agent flow by chaining two model calls (Async)."""
     from google.genai import types
     
     start_time = time.time()
     
     # Step 1: "Research" phase
     research_prompt = f"You are a researcher. Provide 3 short key facts about: {prompt}"
-    response1 = client.models.generate_content(
-        model="gemini-2.5-flash",
+    response1 = await client.aio.models.generate_content(
+        model=model_name,
         contents=research_prompt,
         config=shared_config
     )
@@ -151,8 +151,8 @@ def agent_native(prompt: str):
     
     # Step 2: "Writer" phase
     writer_prompt = f"You are a professional writer. Turn this research into a polite paragraph:\n{research_result}"
-    response2 = client.models.generate_content(
-        model="gemini-2.5-flash",
+    response2 = await client.aio.models.generate_content(
+        model=model_name,
         contents=writer_prompt,
         config=shared_config
     )
@@ -165,11 +165,11 @@ def agent_native(prompt: str):
         "latency_ms": latency_ms
     }
 
-async def stream_native(prompt: str):
+async def stream_native(prompt: str, model_name: str = "gemini-2.5-flash"):
     """Streams Gemini response using Native SDK."""
     import asyncio
     response = client.models.generate_content_stream(
-        model="gemini-2.5-flash",
+        model=model_name,
         contents=prompt,
         config=shared_config
     )
@@ -178,33 +178,28 @@ async def stream_native(prompt: str):
             yield chunk.text
             await asyncio.sleep(0)  # Yield control to event loop
 
-def parallel_native(prompt: str):
-    """Calls Gemini 3 times in parallel using ThreadPoolExecutor in Native SDK."""
-    from google.genai import Client
-    import concurrent.futures
-    
+async def parallel_native(prompt: str, model_name: str = "gemini-2.5-flash"):
+    """Calls Gemini 3 times in parallel using asyncio.gather in Native SDK."""
     start_time = time.time()
     final_text = ""
     
     try:
-        client = Client()
-        
         prompts = [
             f"Provide a positive view on: {prompt}",
             f"Provide a negative view on: {prompt}",
             f"Provide a neutral view on: {prompt}"
         ]
         
-        def call_model(p):
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
+        async def call_model(p):
+            response = await client.aio.models.generate_content(
+                model=model_name,
                 contents=p,
+                config=shared_config
             )
             return response.text
             
-        # Run in parallel using a thread pool
-        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-            results = list(executor.map(call_model, prompts))
+        # Run in parallel using asyncio.gather
+        results = await asyncio.gather(*(call_model(p) for p in prompts))
             
         final_text = "\n\n".join([f"--- Response {i+1} ---\n{text}" for i, text in enumerate(results)])
         
@@ -218,11 +213,8 @@ def parallel_native(prompt: str):
         "latency_ms": latency_ms
     }
 
-def loop_native(prompt: str):
-    """Simulates a loop workflow by calling Gemini 3 times in a loop."""
-    from google.genai import Client
-    
-    client = Client()
+async def loop_native(prompt: str, model_name: str = "gemini-2.5-flash"):
+    """Simulates a loop workflow by calling Gemini 3 times in a loop (Async)."""
     
     start_time = time.time()
     current_prompt = prompt
@@ -230,9 +222,10 @@ def loop_native(prompt: str):
     
     # Run the task 3 times in a loop
     for i in range(3):
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
+        response = await client.aio.models.generate_content(
+            model=model_name,
             contents=current_prompt,
+            config=shared_config
         )
         final_text += f"--- Iteration {i+1} ---\n{response.text}\n\n"
         # Pass the response to the next iteration to simulate context passing
@@ -245,19 +238,17 @@ def loop_native(prompt: str):
         "latency_ms": latency_ms
     }
 
-def structured_native(prompt: str):
-    """Calls Gemini and asks for strictly formatted JSON output."""
-    from google.genai import Client
-    
-    client = Client()
+async def structured_native(prompt: str, model_name: str = "gemini-2.5-flash"):
+    """Calls Gemini and asks for strictly formatted JSON output (Async)."""
     
     start_time = time.time()
     
     json_prompt = f"{prompt}. Respond ONLY with a valid JSON array of objects. Each object must have 'name', 'lifespan', and 'habitat' keys."
     
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
+    response = await client.aio.models.generate_content(
+        model=model_name,
         contents=json_prompt,
+        config=shared_config
     )
     
     latency_ms = int((time.time() - start_time) * 1000)

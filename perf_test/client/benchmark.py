@@ -28,9 +28,11 @@ print("Environment variables loaded for Vertex AI")
 BASE_URL = "http://127.0.0.1:8001"
 SCENARIOS = ["base", "structured", "chat", "tool", "agent", "parallel", "loop"]
 
+MODEL_NAME = "gemini-2.5-flash-lite"
+
 async def test_scenario(client: httpx.AsyncClient, mode: str, scenario: str):
     url = f"{BASE_URL}/v1/{mode}/{scenario}"
-    params = {"prompt": "Tell me a short story"}
+    params = {"prompt": "Tell me a short story", "model_name": MODEL_NAME}
     
     print(f"Testing {mode.upper()} - {scenario}... ", end="", flush=True)
     start_time = time.time()
@@ -52,7 +54,7 @@ async def test_scenario(client: httpx.AsyncClient, mode: str, scenario: str):
 
 async def test_stream(client: httpx.AsyncClient, mode: str):
     url = f"{BASE_URL}/v1/{mode}/stream"
-    params = {"prompt": "Tell me a short story"}
+    params = {"prompt": "Tell me a short story", "model_name": MODEL_NAME}
     
     print(f"Testing {mode.upper()} - stream...")
     start_time = time.time()

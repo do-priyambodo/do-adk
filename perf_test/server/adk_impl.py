@@ -3,29 +3,27 @@ from google.adk.agents import Agent
 from google.adk.runners import InMemoryRunner
 from google.genai import types
 
-# Define a simple agent for comparison
-agent = Agent(
-    name="comparison_agent",
-    model="gemini-2.5-flash",
-    instruction="You are a helpful assistant.",
-    generate_content_config=types.GenerateContentConfig(temperature=1.0)
-)
+# Cache for runners to avoid recreation overhead
+runners_cache = {}
+
+def get_runner(model_name: str):
+    app_name = f"App_{model_name.replace('-', '_')}"
+    if model_name not in runners_cache:
+        local_agent = Agent(
+            name="comparison_agent",
+            model=model_name,
+            instruction="You are a helpful assistant.",
+            generate_content_config=types.GenerateContentConfig(temperature=1.0)
+        )
+        runners_cache[model_name] = InMemoryRunner(
+            app_name=app_name,
+            agent=local_agent,
+        )
+    return runners_cache[model_name]
 
 import asyncio
 
-# Create a Runner
-runner = InMemoryRunner(
-    app_name="ComparisonApp",
-    agent=agent,
-)
 
-async def setup_session():
-    # Explicitly create session for version 1.31.0 since auto_create_session failed
-    await runner.session_service.create_session(
-        app_name="ComparisonApp",
-        user_id="user_123",
-        session_id="session_123"
-    )
 
 # Session setup will be called by FastAPI startup event
 
@@ -42,15 +40,17 @@ async def _ensure_session(session_service, app_name: str, session_id: str):
             session_id=session_id
         )
 
-async def generate_adk(prompt: str, session_id: str = "session_123"):
+async def generate_adk(prompt: str, session_id: str = "session_123", model_name: str = "gemini-2.5-flash"):
     """Calls Gemini using the ADK Framework."""
-    await _ensure_session(runner.session_service, "ComparisonApp", session_id)
+    local_runner = get_runner(model_name)
+    app_name = f"App_{model_name.replace('-', '_')}"
+    await _ensure_session(local_runner.session_service, app_name, session_id)
     
     start_time = time.time()
     response_text = ""
     
     # Using the synchronous run interface for testing
-    for event in runner.run(
+    for event in local_runner.run(
         user_id="user_123",
         session_id=session_id,
         new_message=types.Content(
@@ -69,9 +69,9 @@ async def generate_adk(prompt: str, session_id: str = "session_123"):
         "latency_ms": latency_ms
     }
 
-async def chat_adk(session_id: str, prompt: str):
+async def chat_adk(session_id: str, prompt: str, model_name: str = "gemini-2.5-flash"):
     """Calls Gemini using the ADK Framework and maintains session."""
-    return await generate_adk(prompt, session_id=session_id)
+    return await generate_adk(prompt, session_id=session_id, model_name=model_name)
 
 # --- Tool Use Scenario ---
 
@@ -79,27 +79,34 @@ def get_mock_weather(location: str):
     """Mock tool for weather."""
     return f"The weather in {location} is sunny and 25°C."
 
-tool_agent = Agent(
-    name="tool_agent",
-    model="gemini-2.5-flash",
-    instruction="You are a helpful assistant. Use the get_mock_weather tool to find weather.",
-    tools=[get_mock_weather],
-)
+tool_runners_cache = {}
 
-tool_runner = InMemoryRunner(
-    app_name="ToolApp",
-    agent=tool_agent,
-)
+def get_tool_runner(model_name: str):
+    app_name = f"ToolApp_{model_name.replace('-', '_')}"
+    if model_name not in tool_runners_cache:
+        local_tool_agent = Agent(
+            name="tool_agent",
+            model=model_name,
+            instruction="You are a helpful assistant. Use the get_mock_weather tool to find weather.",
+            tools=[get_mock_weather],
+        )
+        tool_runners_cache[model_name] = InMemoryRunner(
+            app_name=app_name,
+            agent=local_tool_agent,
+        )
+    return tool_runners_cache[model_name]
 
-async def tool_adk(prompt: str):
+async def tool_adk(prompt: str, model_name: str = "gemini-2.5-flash"):
     """Calls Gemini using the ADK Framework and handles tool calls."""
+    local_runner = get_tool_runner(model_name)
+    app_name = f"ToolApp_{model_name.replace('-', '_')}"
     # Ensure session exists for tool test
-    await _ensure_session(tool_runner.session_service, "ToolApp", "session_tool")
+    await _ensure_session(local_runner.session_service, app_name, "session_tool")
     
     start_time = time.time()
     response_text = ""
     
-    for event in tool_runner.run(
+    for event in local_runner.run(
         user_id="user_123",
         session_id="session_tool",
         new_message=types.Content(
@@ -120,39 +127,44 @@ async def tool_adk(prompt: str):
 
 # --- Multi-Agent Scenario ---
 
-researcher = Agent(
-    name="researcher",
-    model="gemini-2.5-flash",
-    instruction="Provide 3 short key facts about the topic.",
-)
+agent_runners_cache = {}
 
-writer = Agent(
-    name="writer",
-    model="gemini-2.5-flash",
-    instruction="Turn the research results into a polite paragraph.",
-)
+def get_agent_runner(model_name: str):
+    app_name = f"AgentApp_{model_name.replace('-', '_')}"
+    if model_name not in agent_runners_cache:
+        local_researcher = Agent(
+            name="researcher",
+            model=model_name,
+            instruction="Provide 3 short key facts about the topic.",
+        )
+        local_writer = Agent(
+            name="writer",
+            model=model_name,
+            instruction="Turn the research results into a polite paragraph.",
+        )
+        local_coordinator = Agent(
+            name="coordinator",
+            model=model_name,
+            instruction="Delegate the research task to the researcher agent, and then delegate the results to the writer agent to produce the final response.",
+            sub_agents=[local_researcher, local_writer],
+        )
+        agent_runners_cache[model_name] = InMemoryRunner(
+            app_name=app_name,
+            agent=local_coordinator,
+        )
+    return agent_runners_cache[model_name]
 
-coordinator = Agent(
-    name="coordinator",
-    model="gemini-2.5-flash",
-    instruction="Delegate the research task to the researcher agent, and then delegate the results to the writer agent to produce the final response.",
-    sub_agents=[researcher, writer],
-)
-
-agent_runner = InMemoryRunner(
-    app_name="AgentApp",
-    agent=coordinator,
-)
-
-async def agent_adk(prompt: str):
+async def agent_adk(prompt: str, model_name: str = "gemini-2.5-flash"):
     """Calls Gemini using the ADK Framework for multi-agent coordination."""
+    local_runner = get_agent_runner(model_name)
+    app_name = f"AgentApp_{model_name.replace('-', '_')}"
     # Ensure session exists for agent test
-    await _ensure_session(agent_runner.session_service, "AgentApp", "session_agent")
+    await _ensure_session(local_runner.session_service, app_name, "session_agent")
     
     start_time = time.time()
     response_text = ""
     
-    for event in agent_runner.run(
+    for event in local_runner.run(
         user_id="user_123",
         session_id="session_agent",
         new_message=types.Content(
@@ -171,13 +183,15 @@ async def agent_adk(prompt: str):
         "latency_ms": latency_ms
     }
 
-async def stream_adk(prompt: str):
+async def stream_adk(prompt: str, model_name: str = "gemini-2.5-flash"):
     """Streams Gemini response using the ADK Framework."""
-    await _ensure_session(runner.session_service, "ComparisonApp", "session_stream")
+    local_runner = get_runner(model_name)
+    app_name = f"App_{model_name.replace('-', '_')}"
+    await _ensure_session(local_runner.session_service, app_name, "session_stream")
     
     # runner.run returns a sync generator.
     # We yield from it to make this an async generator.
-    for event in runner.run(
+    for event in local_runner.run(
         user_id="user_123",
         session_id="session_stream",
         new_message=types.Content(
@@ -194,43 +208,47 @@ async def stream_adk(prompt: str):
 
 from google.adk.agents.parallel_agent import ParallelAgent
 
-p_agent1 = Agent(
-    name="positive",
-    model="gemini-2.5-flash",
-    instruction="Provide a positive view on the topic.",
-)
+parallel_runners_cache = {}
 
-p_agent2 = Agent(
-    name="negative",
-    model="gemini-2.5-flash",
-    instruction="Provide a negative view on the topic.",
-)
+def get_parallel_runner(model_name: str):
+    app_name = f"ParallelApp_{model_name.replace('-', '_')}"
+    if model_name not in parallel_runners_cache:
+        local_p1 = Agent(
+            name="positive",
+            model=model_name,
+            instruction="Provide a positive view on the topic.",
+        )
+        local_p2 = Agent(
+            name="negative",
+            model=model_name,
+            instruction="Provide a negative view on the topic.",
+        )
+        local_p3 = Agent(
+            name="neutral",
+            model=model_name,
+            instruction="Provide a neutral view on the topic.",
+        )
+        local_parallel = ParallelAgent(
+            name="parallel_runner",
+            sub_agents=[local_p1, local_p2, local_p3]
+        )
+        parallel_runners_cache[model_name] = InMemoryRunner(
+            app_name=app_name,
+            agent=local_parallel,
+        )
+    return parallel_runners_cache[model_name]
 
-p_agent3 = Agent(
-    name="neutral",
-    model="gemini-2.5-flash",
-    instruction="Provide a neutral view on the topic.",
-)
-
-parallel_agent = ParallelAgent(
-    name="parallel_runner",
-    sub_agents=[p_agent1, p_agent2, p_agent3]
-)
-
-parallel_runner = InMemoryRunner(
-    app_name="ParallelApp",
-    agent=parallel_agent,
-)
-
-async def parallel_adk(prompt: str):
+async def parallel_adk(prompt: str, model_name: str = "gemini-2.5-flash"):
     """Calls Gemini using the ADK Framework for parallel execution."""
+    local_runner = get_parallel_runner(model_name)
+    app_name = f"ParallelApp_{model_name.replace('-', '_')}"
     # Ensure session exists for parallel test
-    await _ensure_session(parallel_runner.session_service, "ParallelApp", "session_parallel")
+    await _ensure_session(local_runner.session_service, app_name, "session_parallel")
     
     start_time = time.time()
     response_text = ""
     
-    for event in parallel_runner.run(
+    for event in local_runner.run(
         user_id="user_123",
         session_id="session_parallel",
         new_message=types.Content(
@@ -253,32 +271,38 @@ async def parallel_adk(prompt: str):
 
 from google.adk.agents.loop_agent import LoopAgent
 
-loop_sub_agent = Agent(
-    name="worker",
-    model="gemini-2.5-flash",
-    instruction="Provide a short list of 3 animals.",
-)
+loop_runners_cache = {}
 
-loop_agent = LoopAgent(
-    name="loop_runner",
-    sub_agents=[loop_sub_agent],
-    max_iterations=3
-)
+def get_loop_runner(model_name: str):
+    app_name = f"LoopApp_{model_name.replace('-', '_')}"
+    if model_name not in loop_runners_cache:
+        local_sub_agent = Agent(
+            name="worker",
+            model=model_name,
+            instruction="Provide a short list of 3 animals.",
+        )
+        local_loop_agent = LoopAgent(
+            name="loop_runner",
+            sub_agents=[local_sub_agent],
+            max_iterations=3
+        )
+        loop_runners_cache[model_name] = InMemoryRunner(
+            app_name=app_name,
+            agent=local_loop_agent,
+        )
+    return loop_runners_cache[model_name]
 
-loop_runner = InMemoryRunner(
-    app_name="LoopApp",
-    agent=loop_agent,
-)
-
-async def loop_adk(prompt: str):
+async def loop_adk(prompt: str, model_name: str = "gemini-2.5-flash"):
     """Calls Gemini using the ADK Framework for loop execution."""
+    local_runner = get_loop_runner(model_name)
+    app_name = f"LoopApp_{model_name.replace('-', '_')}"
     # Ensure session exists for loop test
-    await _ensure_session(loop_runner.session_service, "LoopApp", "session_loop")
+    await _ensure_session(local_runner.session_service, app_name, "session_loop")
     
     start_time = time.time()
     response_text = ""
     
-    for event in loop_runner.run(
+    for event in local_runner.run(
         user_id="user_123",
         session_id="session_loop",
         new_message=types.Content(
@@ -299,28 +323,35 @@ async def loop_adk(prompt: str):
 
 # --- Structured Output Scenario ---
 
-structured_agent = Agent(
-    name="structured_agent",
-    model="gemini-2.5-flash",
-    instruction="You are a data extractor. Respond ONLY with a valid JSON array of objects.",
-)
+structured_runners_cache = {}
 
-structured_runner = InMemoryRunner(
-    app_name="StructuredApp",
-    agent=structured_agent,
-)
+def get_structured_runner(model_name: str):
+    app_name = f"StructuredApp_{model_name.replace('-', '_')}"
+    if model_name not in structured_runners_cache:
+        local_structured_agent = Agent(
+            name="structured_agent",
+            model=model_name,
+            instruction="You are a data extractor. Respond ONLY with a valid JSON array of objects.",
+        )
+        structured_runners_cache[model_name] = InMemoryRunner(
+            app_name=app_name,
+            agent=local_structured_agent,
+        )
+    return structured_runners_cache[model_name]
 
-async def structured_adk(prompt: str):
+async def structured_adk(prompt: str, model_name: str = "gemini-2.5-flash"):
     """Calls Gemini using the ADK Framework and maintains session."""
+    local_runner = get_structured_runner(model_name)
+    app_name = f"StructuredApp_{model_name.replace('-', '_')}"
     # Ensure session exists for structured test
-    await _ensure_session(structured_runner.session_service, "StructuredApp", "session_structured")
+    await _ensure_session(local_runner.session_service, app_name, "session_structured")
     
     start_time = time.time()
     response_text = ""
     
     json_prompt = f"{prompt}. Each object must have 'name', 'lifespan', and 'habitat' fields."
     
-    for event in structured_runner.run(
+    for event in local_runner.run(
         user_id="user_123",
         session_id="session_structured",
         new_message=types.Content(

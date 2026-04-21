@@ -10,10 +10,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-@app.on_event("startup")
-async def startup_event():
-    from adk_impl import setup_session
-    await setup_session()
+
 
 @app.get("/")
 def read_root():
@@ -26,23 +23,23 @@ def read_root():
     }
 
 @app.get("/v1/native/{scenario}")
-async def run_native(scenario: str, prompt: str = "Hello", session_id: str = "session_123"):
+async def run_native(scenario: str, prompt: str = "Hello", session_id: str = "session_123", model_name: str = "gemini-2.5-flash"):
     if scenario == "base":
-        result = generate_native(prompt)
+        result = await generate_native(prompt, model_name)
     elif scenario == "chat":
-        result = chat_native(session_id, prompt)
+        result = await chat_native(session_id, prompt, model_name)
     elif scenario == "tool":
-        result = tool_native(prompt)
+        result = await tool_native(prompt, model_name)
     elif scenario == "agent":
-        result = agent_native(prompt)
+        result = await agent_native(prompt, model_name)
     elif scenario == "parallel":
-        result = parallel_native(prompt)
+        result = await parallel_native(prompt, model_name)
     elif scenario == "loop":
-        result = loop_native(prompt)
+        result = await loop_native(prompt, model_name)
     elif scenario == "structured":
-        result = structured_native(prompt)
+        result = await structured_native(prompt, model_name)
     elif scenario == "stream":
-        return StreamingResponse(stream_native(prompt), media_type="text/plain")
+        return StreamingResponse(stream_native(prompt, model_name), media_type="text/plain")
     else:
         return {"error": f"Scenario '{scenario}' not supported for Native SDK"}
         
@@ -55,23 +52,23 @@ async def run_native(scenario: str, prompt: str = "Hello", session_id: str = "se
     }
 
 @app.get("/v1/adk/{scenario}")
-async def run_adk(scenario: str, prompt: str = "Hello", session_id: str = "session_123"):
+async def run_adk(scenario: str, prompt: str = "Hello", session_id: str = "session_123", model_name: str = "gemini-2.5-flash"):
     if scenario == "base":
-        result = await generate_adk(prompt, session_id=session_id)
+        result = await generate_adk(prompt, session_id, model_name)
     elif scenario == "chat":
-        result = await chat_adk(session_id, prompt)
+        result = await chat_adk(session_id, prompt, model_name)
     elif scenario == "tool":
-        result = await tool_adk(prompt)
+        result = await tool_adk(prompt, model_name)
     elif scenario == "agent":
-        result = await agent_adk(prompt)
+        result = await agent_adk(prompt, model_name)
     elif scenario == "parallel":
-        result = await parallel_adk(prompt)
+        result = await parallel_adk(prompt, model_name)
     elif scenario == "loop":
-        result = await loop_adk(prompt)
+        result = await loop_adk(prompt, model_name)
     elif scenario == "structured":
-        result = await structured_adk(prompt)
+        result = await structured_adk(prompt, model_name)
     elif scenario == "stream":
-        return StreamingResponse(stream_adk(prompt), media_type="text/plain")
+        return StreamingResponse(stream_adk(prompt, model_name), media_type="text/plain")
     else:
         return {"error": f"Scenario '{scenario}' not supported for ADK Framework"}
         

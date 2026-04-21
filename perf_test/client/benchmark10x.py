@@ -1,7 +1,7 @@
 import asyncio
 import httpx
 import time
-from benchmark import SCENARIOS, run_all_tests, print_summary
+from benchmark import SCENARIOS, run_all_tests, print_summary, warm_up
 from google.genai import Client
 import os
 
@@ -26,6 +26,7 @@ if "GCP_REGION" in os.environ:
 
 async def main():
     async with httpx.AsyncClient() as client:
+        await warm_up(client)
         all_runs = []
         
         for i in range(10):
