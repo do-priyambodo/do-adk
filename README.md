@@ -140,6 +140,9 @@ To provide a comprehensive comparison, we defined 8 distinct scenarios represent
 
 > **Note:** Don't rely solely on these averages. The winner often varies between runs due to network jitter and model variability. Please check the individual test results below for a comprehensive understanding.
 
+> [!NOTE]
+> Want to test this on your own? You can follow the step-by-step instructions in [INSTALLATION.md](file:///usr/local/google/home/priyambodo/Coding/DO-PRIYAMBODO/do-adk/INSTALLATION.md) to deploy the server and run the benchmark client yourself!
+
 | Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Winner    |
 | :---            | :---         | :---         | :---       | :---      |
 | **base**        | 8879         | 12963        | 4084       | Native    |
