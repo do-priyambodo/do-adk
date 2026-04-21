@@ -138,6 +138,8 @@ To provide a comprehensive comparison, we defined 8 distinct scenarios represent
 
 ### Summary of Averages (10 Runs)
 
+> **Note:** Don't rely solely on these averages. The winner often varies between runs due to network jitter and model variability. Please check the individual test results below for a comprehensive understanding.
+
 | Scenario        | Native (ms)  | ADK (ms)     | Diff (ms)  | Winner    |
 | :---            | :---         | :---         | :---       | :---      |
 | **base**        | 8879         | 12963        | 4084       | Native    |
