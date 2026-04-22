@@ -25,3 +25,6 @@ perf_test/client/result10x.txt
 # Cloned dependencies
 adk-python/
 perf_test/archived/
+
+# Archives
+archives/
