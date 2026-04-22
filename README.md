@@ -357,3 +357,9 @@ For simple tasks, Native SDK wins. But as soon as you step into the realm of **r
 3.  **The Perfect Fit for "Vibe Coding"**: In an era where AI assistants help write code, ADK's high-level, declarative structure makes it the most natural and powerful framework to work with. You can "vibe" out the architecture, and ADK makes it work securely and efficiently.
 
 **Final Verdict**: If you are building a simple, one-shot AI app, use the Native SDK. But if you are building sophisticated, multi-step, multi-agent systems on Google Cloud, **Google ADK is the superior choice and the clear winner.**
+
+---
+
+## Next Steps: Hands-On Validation
+
+We encourage you to validate these findings in your own environment. The full codebase for all scenarios and benchmarks is included in this repository. For detailed, step-by-step instructions on how to install dependencies, configure your environment, and run the performance tests, please refer to the [INSTALLATION.md](INSTALLATION.md) guide.
